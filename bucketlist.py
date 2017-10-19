@@ -1,6 +1,4 @@
-#### Einkaufszettel App ####
-# author: Harun & Tugay
-# VP-WS1718-Python
+#### Einkaufszettel App .... ######
 
 
 einkaufszettel = ['Banane','Opfel', 'Erdbeer']
@@ -107,9 +105,15 @@ def einkaufLoschen():
         einkaufszettel_index = list(enumerate(einkaufszettel))
         print(einkaufszettel_index)
         print("Welches Eintrag möchten Sie löschen?")
+
         loeschen_eingabe = int(input())
-        print("Das Eintrag:",  einkaufszettel[loeschen_eingabe], "wurde gelöscht")
-        einkaufszettel.remove(einkaufszettel[loeschen_eingabe])
+        try:
+            print("Das Eintrag:",  einkaufszettel[loeschen_eingabe], "wurde gelöscht")
+            einkaufszettel.remove(einkaufszettel[loeschen_eingabe])
+        except IndexError:
+            print("Bitte nur Positionen aus der Liste eingeben. Aktuell befinden sich", len(einkaufszettel),"Einträge in der Liste. Geben Sie bitte höchstens", len(einkaufszettel)-1, "ein")
+            einkaufLoschen()
+
         menuAnzeigen()
         app()
 
