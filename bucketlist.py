@@ -43,8 +43,17 @@ def einkaufHinzufugen():
 
         print("Bitte geben Sie das Eintrag ein:")
         last_eintrag = input()
-        einkaufszettel.append(last_eintrag)
-        print("Einkaufszettel: ", last_eintrag , "wurde hinzugefügt.")
+        if last_eintrag in einkaufszettel:
+            print("Wie viele weitere", last_eintrag , "möchten Sie noch hinzufügen?")
+            anzahl = int(input())
+            index_eintrag = einkaufszettel.index(last_eintrag)
+            einkaufszettel.insert(index_eintrag, last_eintrag+":"+str(anzahl))
+            einkaufszettel.remove(einkaufszettel[index_eintrag+1])
+            print("Einkaufszettel: Es wurden ", anzahl , last_eintrag ," hinzugefügt.")
+
+        else:
+            einkaufszettel.append(last_eintrag)
+            print("Einkaufszettel: ", last_eintrag , "wurde hinzugefügt.")
         menuAnzeigen()
         app()
 
