@@ -12,12 +12,11 @@ kontaktbuch = []
 
 def menuAnzeigen():
 
-    print("\n Menü: \n - 1 Kontakte anzeigen \n - 2 Kontakt hinzufügen \n - 3 Einzelne Kontakte anzeigen \n - 4 Einzelne Kontakte ändern \n - 5 Kontakt löschen \n - 6 Exit")
+    print("\n Menü: \n - 1 Kontakte anzeigen \n - 2 Kontakt hinzufügen \n - 3 Einzelne Kontakte suchen \n - 4 Einzelne Kontakte ändern \n - 5 Kontakt löschen \n - 6 Exit")
     print("Bitte geben Sie das Menü an: ")
 
 
 def navigation():
-
 
     try:
         navigation_eingabe = int(input())
@@ -32,7 +31,7 @@ def navigation():
             kontaktSuchen()
 
         elif navigation_eingabe == 4:
-            pass
+            kontaktAndern()
 
         elif navigation_eingabe == 5:
             pass
@@ -103,6 +102,7 @@ def kontaktHinzufugen():
     menuAnzeigen()
     navigation()
 
+
 def kontaktSuchen():
 
     print("\n 1 - Nach Vornamen suchen \n 2 - Nach Nachnamen suchen \n 3 - Nach Vor- und Nachnamen suchen")
@@ -122,7 +122,6 @@ def kontaktSuchen():
             match = next((l for l in kontaktbuch if kontakt['Nachname'] == search_value), None)
             print(match)
             afterKontaktSuchen()
-
 
         else:
             print("Bitte nur 1 - 3 eingeben")
@@ -155,8 +154,51 @@ def afterKontaktSuchen():
         afterKontaktSuchen()
 
 
-    menuAnzeigen()
-    navigation()
+def kontaktAndern():
+
+    print("Welchen Kontakt möchten Sie ändern?")
+    print(list(enumerate(kontaktbuch)))
+
+    print("Welchen Eintrag möchten Sie ändern? (Bitte Position eingeben)")
+    aendern_eingabe = int(input())
+
+    if aendern_eingabe >= len(kontaktbuch) or aendern_eingabe < 0:
+        print("Bitte geben Sie nur verfügbare Positionen an.")
+        kontaktAndern()
+
+    else:
+        print(kontaktbuch[aendern_eingabe])
+        print("Welchen Eintrag möchten Sie ändern?")
+        edit_value = input()
+        
+        print(kontaktbuch[aendern_eingabe][edit_value])
+        print("Geben Sie das neue Eintrag ein:")
+        new_value = input()
+        kontakt[edit_value] = new_value
+        
+        print(kontaktbuch[aendern_eingabe])
+
+        print("\n 1 - Weitere Kontakte ändern \n 2 - Zurück zur Hauptmenü")
+
+        try:
+            navigation_eingabe_unter_menu = int(input())
+    
+            if navigation_eingabe_unter_menu == 1:
+                kontaktAndern()
+    
+            elif navigation_eingabe_unter_menu == 2:
+                menuAnzeigen()
+                navigation()
+    
+            else:
+                print("Bitte geben Sie 1 oder 2 ein.")
+                kontaktAndern()
+    
+        except ValueError:
+            print("Bitte nur Integer eingeben.")
+            kontaktAndern()
+
+
 
 
 
