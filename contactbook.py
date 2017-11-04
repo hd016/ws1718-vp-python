@@ -6,13 +6,13 @@ print("--- Kontaktbuch ---")
 
 
 ## Kontaktbuch als Liste, die Kontakte als Dicts
-
+global kontaktbuch
 kontaktbuch = []
 
 
 def menuAnzeigen():
 
-    print("\n Menü: \n - 1 Kontakte anzeigen \n - 2 Kontakt hinzufügen \n - 3 Einzelne Kontakte suchen \n - 4 Einzelne Kontakte ändern \n - 5 Kontakt löschen \n - 6 Exit")
+    print("\n Menü: \n - 1 Alle Kontakte anzeigen \n - 2 Kontakt hinzufügen \n - 3 Einzelne Kontakte suchen \n - 4 Einzelne Kontakte ändern \n - 5 Kontakt löschen \n - 6 Export in eine CSV Datei (Speichern) \n - 7 Import aus einer CSV Datei (Laden)")
     print("Bitte geben Sie das Menü an: ")
 
 
@@ -34,10 +34,13 @@ def navigation():
             kontaktAndern()
 
         elif navigation_eingabe == 5:
-            pass
+            kontaktLoeschen()
 
         elif navigation_eingabe == 6:
-            pass
+            export_csv()
+
+        elif navigation_eingabe == 7:
+            import_csv()
 
         else:
             print('not a number 1-6')
@@ -54,7 +57,9 @@ def kontakteAnzeigen():
             print("Bitte zuerst Kontakt hinzufügen.")
             kontaktHinzufugen()
     else:
-        print(kontaktbuch)
+        keys = ('Vorname', 'Nachname')
+        lst = [(i, {k: d[k] for k in keys}) for i, d in enumerate(kontaktbuch)]
+        print(lst)
         print("----")
 
 
@@ -91,7 +96,7 @@ def kontaktHinzufugen():
     email = input()
 
     global kontakt
-    kontakt = {'Anrede': anrede,'Vorname': vorname_kontakt, 'Nachname': nachname_kontakt, 'Straße': strasse, 'Hausnummer': hausnummer, 'PLZ': plz, 'Stadt' : stadt, 'Telefon 1': telefon1, 'Telefon 2': telefon2, 'E-Mail': email}
+    kontakt = {'Anrede': anrede,'Vorname': vorname_kontakt, 'Nachname': nachname_kontakt, 'Strasse': strasse, 'Hausnummer': hausnummer, 'PLZ': plz, 'Stadt' : stadt, 'Telefon1': telefon1, 'Telefon2': telefon2, 'E-Mail': email}
 
     print("Kontakt", kontakt["Vorname"], ",", kontakt["Nachname"] , "wurde hinzugefügt.")
 
@@ -170,35 +175,72 @@ def kontaktAndern():
         print(kontaktbuch[aendern_eingabe])
         print("Welchen Eintrag möchten Sie ändern?")
         edit_value = input()
-        
+
         print(kontaktbuch[aendern_eingabe][edit_value])
         print("Geben Sie das neue Eintrag ein:")
         new_value = input()
         kontakt[edit_value] = new_value
-        
+
         print(kontaktbuch[aendern_eingabe])
 
         print("\n 1 - Weitere Kontakte ändern \n 2 - Zurück zur Hauptmenü")
 
         try:
             navigation_eingabe_unter_menu = int(input())
-    
+
             if navigation_eingabe_unter_menu == 1:
                 kontaktAndern()
-    
+
             elif navigation_eingabe_unter_menu == 2:
                 menuAnzeigen()
                 navigation()
-    
+
             else:
                 print("Bitte geben Sie 1 oder 2 ein.")
                 kontaktAndern()
-    
+
         except ValueError:
             print("Bitte nur Integer eingeben.")
             kontaktAndern()
 
 
+def kontaktLoeschen():
+
+    print("Welchen Kontakt möchten Sie löschen?")
+    print(list(enumerate(kontaktbuch)))
+
+    loeschen_eingabe = int(input())
+
+    try:
+        del kontaktbuch[loeschen_eingabe]
+        print("Der Kontakt wurde gelöscht.")
+
+    except IndexError:
+        print("Bitte nur Positionen aus der Liste eingeben. Aktuell befinden sich", len(kontaktbuch),"Einträge in der Liste. Geben Sie bitte höchstens", len(kontaktbuch)-1, "ein")
+        kontaktLoeschen()
+
+
+def export_csv():
+
+    with open('liste.csv', 'w', newline='') as csvfile:
+
+        fieldnames = ['Anrede', 'Vorname', 'Nachname', 'Strasse' , 'Hausnummer' , 'PLZ' , 'Stadt' , 'Telefon1' , 'Telefon2' , 'E-Mail']
+
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+
+        writer.writerows(kontaktbuch)
+
+def import_csv():
+
+    with open('liste.csv') as csvfile:
+
+        reader = csv.DictReader(csvfile,delimiter=",")
+
+        for lines in reader:
+            kontaktbuch.append(dict(reader))
+        menuAnzeigen()
+        navigation()
 
 
 
