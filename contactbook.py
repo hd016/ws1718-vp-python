@@ -57,9 +57,10 @@ def kontakteAnzeigen():
             print("Bitte zuerst Kontakt hinzufügen.")
             kontaktHinzufugen()
     else:
-        keys = ('Vorname', 'Nachname')
-        lst = [(i, {k: d[k] for k in keys}) for i, d in enumerate(kontaktbuch)]
-        print(lst)
+        #keys = ('Vorname', 'Nachname')
+        #lst = [(i, {k: d[k] for k in keys}) for i, d in enumerate(kontaktbuch)]
+        #print(lst)
+        print(kontaktbuch)
         print("----")
 
 
@@ -214,6 +215,8 @@ def kontaktLoeschen():
     try:
         del kontaktbuch[loeschen_eingabe]
         print("Der Kontakt wurde gelöscht.")
+        menuAnzeigen()
+        navigation()
 
     except IndexError:
         print("Bitte nur Positionen aus der Liste eingeben. Aktuell befinden sich", len(kontaktbuch),"Einträge in der Liste. Geben Sie bitte höchstens", len(kontaktbuch)-1, "ein")
@@ -222,7 +225,7 @@ def kontaktLoeschen():
 
 def export_csv():
 
-    with open('liste.csv', 'w', newline='') as csvfile:
+    with open('listeout.csv', 'w', newline='') as csvfile:
 
         fieldnames = ['Anrede', 'Vorname', 'Nachname', 'Strasse' , 'Hausnummer' , 'PLZ' , 'Stadt' , 'Telefon1' , 'Telefon2' , 'E-Mail']
 
@@ -231,17 +234,24 @@ def export_csv():
 
         writer.writerows(kontaktbuch)
 
+    print("Das CSV wurde erfolgreich exportiert.")
+
+    menuAnzeigen()
+    navigation()
+
+
 def import_csv():
 
-    with open('liste.csv') as csvfile:
+    with open('listeout.csv') as csvfile:
 
         reader = csv.DictReader(csvfile,delimiter=",")
 
-        for lines in reader:
-            kontaktbuch.append(dict(reader))
-        menuAnzeigen()
-        navigation()
+        kontaktbuch.extend(reader)
 
+    print("Das CSV wurde erfolgreich importiert.")
+
+    menuAnzeigen()
+    navigation()
 
 
 menuAnzeigen()
