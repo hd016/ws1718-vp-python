@@ -1,4 +1,4 @@
-### Aufgabe 2 - Kontaktbuch - CSV mit dicts - ok ####
+### Aufgabe 2 - Kontaktbuch - CSV mit Dicts ####
 
 import csv
 
@@ -10,9 +10,10 @@ global kontaktbuch
 kontaktbuch = []
 
 
+
 def menuAnzeigen():
 
-    print("\n Menü: \n - 1 Alle Kontakte anzeigen \n - 2 Kontakt hinzufügen \n - 3 Einzelne Kontakte suchen \n - 4 Einzelne Kontakte ändern \n - 5 Kontakt löschen \n - 6 Export in eine CSV Datei (Speichern) \n - 7 Import aus einer CSV Datei (Laden)")
+    print("\n Menü: \n - 1 Alle Kontakte anzeigen \n - 2 Kontakt hinzufügen \n - 3 Einzelne Kontakte suchen \n - 4 Einzelne Kontakte ändern \n - 5 Kontakt löschen \n - 6 Export in eine CSV Datei (Speichern) \n - 7 Import aus einer CSV Datei (Laden) \n - 8 Programm beenden")
     print("Bitte geben Sie das Menü an: ")
 
 
@@ -42,26 +43,35 @@ def navigation():
         elif navigation_eingabe == 7:
             import_csv()
 
+        elif navigation_eingabe == 8:
+            exit()
+
         else:
-            print('not a number 1-6')
+            print("Nummer zwischen 1-8 erforderlich")
             navigation()
 
     except ValueError:
-        print('Pls only give integer numbers.')
+        print("Bitte nur Integer eingeben.")
         navigation()
 
 
 def kontakteAnzeigen():
     if len(kontaktbuch) == 0:
             print("Kontaktbuch ist leer.")
-            print("Bitte zuerst Kontakt hinzufügen.")
-            kontaktHinzufugen()
+            print("Bitte zuerst Kontakt hinzufügen.\n")
+            print("Möchten Sie einen neuen Kontakt hinzufügen? j/n")
+            eingabe = input()
+            if eingabe == "j":
+                kontaktHinzufugen()
+            else:
+                menuAnzeigen()
+                navigation()
     else:
-        #keys = ('Vorname', 'Nachname')
-        #lst = [(i, {k: d[k] for k in keys}) for i, d in enumerate(kontaktbuch)]
-        #print(lst)
-        print(kontaktbuch)
+        for row in kontaktbuch:
+            print(row)
         print("----")
+        menuAnzeigen()
+        navigation()
 
 
 def kontaktHinzufugen():
@@ -96,14 +106,14 @@ def kontaktHinzufugen():
     print("E-Mail:")
     email = input()
 
-    global kontakt
     kontakt = {'Anrede': anrede,'Vorname': vorname_kontakt, 'Nachname': nachname_kontakt, 'Strasse': strasse, 'Hausnummer': hausnummer, 'PLZ': plz, 'Stadt' : stadt, 'Telefon1': telefon1, 'Telefon2': telefon2, 'E-Mail': email}
 
     print("Kontakt", kontakt["Vorname"], ",", kontakt["Nachname"] , "wurde hinzugefügt.")
 
     kontaktbuch.append(kontakt)
 
-    print(kontaktbuch)
+    for row in kontaktbuch:
+        print(row)
 
     menuAnzeigen()
     navigation()
@@ -111,30 +121,34 @@ def kontaktHinzufugen():
 
 def kontaktSuchen():
 
-    print("\n 1 - Nach Vornamen suchen \n 2 - Nach Nachnamen suchen \n 3 - Nach Vor- und Nachnamen suchen")
+    print("\n 1 - Nach Vornamen suchen \n 2 - Nach Nachnamen suchen \n")
     try:
         navigation_eingabe = int(input())
 
         if navigation_eingabe == 1:
             print("Bitte geben Sie den Vornamen ein:")
             search_value = input()
-            match = next((l for l in kontaktbuch if kontakt['Vorname'] == search_value), None)
+
+            match = next((l for l in kontaktbuch if l['Vorname'] == search_value), None)
             print(match)
+
             afterKontaktSuchen()
 
         elif navigation_eingabe == 2:
             print("Bitte geben Sie den Nachnamen ein:")
             search_value = input()
-            match = next((l for l in kontaktbuch if kontakt['Nachname'] == search_value), None)
+
+            match = next((l for l in kontaktbuch if l['Nachname'] == search_value), None)
             print(match)
+
             afterKontaktSuchen()
 
         else:
-            print("Bitte nur 1 - 3 eingeben")
+            print("Bitte nur 1 - 2 eingeben")
             kontaktSuchen()
 
     except ValueError:
-        print('Pls only give integer numbers.')
+        print("Bitte nur Integer eingeben.")
         kontaktSuchen()
 
 
@@ -163,7 +177,10 @@ def afterKontaktSuchen():
 def kontaktAndern():
 
     print("Welchen Kontakt möchten Sie ändern?")
-    print(list(enumerate(kontaktbuch)))
+    i = 0
+    for row in kontaktbuch:
+        print(i, row)
+        i += 1
 
     print("Welchen Eintrag möchten Sie ändern? (Bitte Position eingeben)")
     aendern_eingabe = int(input())
@@ -178,9 +195,10 @@ def kontaktAndern():
         edit_value = input()
 
         print(kontaktbuch[aendern_eingabe][edit_value])
-        print("Geben Sie das neue Eintrag ein:")
+
+        print("Geben Sie den neuen Eintrag ein:")
         new_value = input()
-        kontakt[edit_value] = new_value
+        kontaktbuch[aendern_eingabe][edit_value] = new_value
 
         print(kontaktbuch[aendern_eingabe])
 
@@ -225,16 +243,15 @@ def kontaktLoeschen():
 
 def export_csv():
 
-    with open('listeout.csv', 'w', newline='') as csvfile:
+    with open('liste.csv', 'w', newline='') as csvfile:
 
         fieldnames = ['Anrede', 'Vorname', 'Nachname', 'Strasse' , 'Hausnummer' , 'PLZ' , 'Stadt' , 'Telefon1' , 'Telefon2' , 'E-Mail']
 
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-
         writer.writerows(kontaktbuch)
 
-    print("Das CSV wurde erfolgreich exportiert.")
+    print("Die CSV wurde erfolgreich exportiert.")
 
     menuAnzeigen()
     navigation()
@@ -242,13 +259,14 @@ def export_csv():
 
 def import_csv():
 
-    with open('listeout.csv') as csvfile:
+    with open('liste.csv') as csvfile:
 
         reader = csv.DictReader(csvfile,delimiter=",")
 
-        kontaktbuch.extend(reader)
+        for row in reader:
+            kontaktbuch.append(row)
 
-    print("Das CSV wurde erfolgreich importiert.")
+    print("Die CSV wurde erfolgreich importiert.")
 
     menuAnzeigen()
     navigation()
