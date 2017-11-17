@@ -1,7 +1,9 @@
 #Aufgabe 1 einlesen
 #####################
 import sys          #
-print(sys.version)  #
+print(sys.version)
+print("")
+print("------ Bitte Python Version 3.5.x verwenden! Ab Version 3.5.x werden geschriebene Dictionaries aus writedict als ordered dict gespeichert! ----")#
 #####################
 
 #####################
@@ -12,10 +14,12 @@ import chardet      #
 import re           #
 #####################
 
+
 faelle = []
 
 global row
 row = {}
+
 
 def encoder():
 
@@ -44,7 +48,7 @@ def import_csv():
 
     print("Die CSV wurde erfolgreich importiert.")
 
-    filter()
+    #filter()
 
 
 def filter():
@@ -56,13 +60,12 @@ def filter():
 
         fieldnames = ["Stadt-/Landkreis","Straftat","Aufklaerungsquote"]
 
-        writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', )
+        writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         for line in filtered_list:
             writer.writerow(line)
 
     print("Aufgabe 1-1.csv wurde exportiert.")
-
 
 #encoder() if you need encoder() then -> with open encoding=result["encoding"]
 import_csv()
