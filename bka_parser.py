@@ -1,10 +1,11 @@
 #Aufgabe 1 einlesen
 #####################
 import sys          #
-print(sys.version)
-print("")
-print("------ Bitte Python Version 3.5.x verwenden! Ab Version 3.5.x werden geschriebene Dictionaries aus writedict als ordered dict gespeichert! ----")#
+print(sys.version)  #
+print("")           #
 #####################
+
+print("------ Bitte Python Version 3.5.x verwenden! Ab Version 3.5.x werden geschriebene Dictionaries aus writedict als ordered dict gespeichert! ----")
 
 #####################
 # Modul Importe     #
@@ -66,6 +67,10 @@ def filter():
             writer.writerow(line)
 
     print("Aufgabe 1-1.csv wurde exportiert.")
+
+
+
+
 
 #encoder() if you need encoder() then -> with open encoding=result["encoding"]
 import_csv()
