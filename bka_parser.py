@@ -76,6 +76,7 @@ def bundesweite_berechnung():
     for d in berechnen_list:
         result[d['Straftat']] += int(d['erfasste Faelle'])
 
+    global bundesweite_liste
     bundesweite_liste = [{'Straftat': straftat, 'erfasste Faelle': value} for straftat, value in result.items()]
 
     with open('aufgabe1-2.csv', "w", newline='', encoding='ISO-8859-1') as filter_output:
@@ -91,6 +92,26 @@ def bundesweite_berechnung():
     print("Aufgabe 1-2.csv wurde exportiert.")
 
 
+
+def sorted_bundesweite_berechnung():
+
+    sorted_liste = sorted(bundesweite_liste, key=lambda k: k['erfasste Faelle'], reverse=True)
+
+    with open('aufgabe1-3.csv', "w", newline='', encoding='ISO-8859-1') as filter_output:
+
+        fieldnames = ["Straftat","erfasste Faelle"]
+
+        writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
+        writer.writeheader()
+
+        for line in sorted_liste:
+            writer.writerow(line)
+
+    print("Aufgabe 1-3.csv wurde exportiert.")
+
+
+
 import_csv()
 bundesweite_berechnung()
+sorted_bundesweite_berechnung()
 
