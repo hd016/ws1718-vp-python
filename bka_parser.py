@@ -51,7 +51,7 @@ def import_csv():
     #filter()
 
 
-def filter():
+def filter_method():
 
     filtered_list = [row for row in cleaned_list if "LK" in row["Kreisart"] and float(row["Aufklaerungsquote"]) < 50 and not "Straftaten insgesamt" in row["Straftat"]]
 
@@ -295,13 +295,13 @@ def filterer1(val1, val2):
     operatoren_auswahl = int(input())
 
     if operatoren_auswahl == 1:
-        advanced_filtered_list_val1 = [row for row in cleaned_list if float(row[val1]) < wert1]
+        advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val1]) < wert1]
 
     elif operatoren_auswahl == 2:
-        advanced_filtered_list_val1 = [row for row in cleaned_list if float(row[val1]) > wert1]
+        advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) > wert1]
 
     elif operatoren_auswahl == 3:
-        advanced_filtered_list_val1 = [row for row in cleaned_list if float(row[val1]) == wert1]
+        advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) == wert1]
 
     else:
         print("Bitte nur 1-3 eingeben.")
@@ -322,13 +322,13 @@ def filterer1(val1, val2):
 
 
     if operatoren_auswahl == 1:
-        advanced_filtered_list_val2 = [row for row in cleaned_list if float(row[val2]) < wert2]
+        advanced_filtered_list_val2 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) < wert2]
 
     elif operatoren_auswahl == 2:
-        advanced_filtered_list_val2 = [row for row in cleaned_list if float(row[val2]) > wert2]
+        advanced_filtered_list_val2 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) > wert2]
 
     elif operatoren_auswahl == 3:
-        advanced_filtered_list_val2 = [row for row in cleaned_list if float(row[val2]) == wert2]
+        advanced_filtered_list_val2 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) == wert2]
 
     else:
         print("Bitte nur 1-3 eingeben.")
@@ -337,27 +337,25 @@ def filterer1(val1, val2):
 
 
 def map_filters(list1, list2):
-    print("\nMit Welchen Wert möchten Sie das Erste Feld filtern?")
+    print("\nMit Welchen logischen Operatoren möchten Sie die Felder filtern?")
     print("\n1 - &"
           "\n2 - |")
 
     operatoren_auswahl = int(input())
 
-    if operatoren_auswahl == 1:
-        mapped_list = [row for row in list1 and list2]
-        for x in mapped_list:
-            print(x)
-    if operatoren_auswahl == 2:
-        mapped_list = [row for row in list1 or list2]
-        for x in mapped_list:
-            print(x)
+    andor = {
+    1:lambda l1,l2: filter(lambda el:el in set(l1)&set(l2), l1+l2),
+    2:lambda l1,l2: filter(lambda el:el in set(l1)|set(l2), l1+l2),}
+
+
+    mapped_list = andor[operatoren_auswahl](
+    advanced_filtered_list_val1,
+    advanced_filtered_list_val2)
+    for x in mapped_list:
+        print(x)
 
 def hauptmenu():
     print("ok")
-
-
-
-
 
 
 import_csv()
