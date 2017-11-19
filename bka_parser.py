@@ -1,11 +1,13 @@
 #Abgabe 1 Vertiefung Programmierung
+#Autoren: Harun Dalici (29488), Tugay Yentur()
+
 #######################
 import sys          #
 print(sys.version)  #
 print("")           #
 #####################
 
-print("------ Bitte Python Version 3.5.x verwenden! Ab Version 3.5.x werden geschriebene Dictionaries aus writedict als ordered dict gespeichert! ----")
+print("------ Bitte Python Version 3.5.x verwenden! Ab Version 3.5.x werden sind Dictionaries als Ordered Dict vordefiniert.! ----")
 print("")
 
 #####################################
@@ -13,9 +15,8 @@ print("")
                                     #
 import csv                          #
 import chardet                      #
-from collections import defaultdict
-import itertools
-import operator as op
+from collections import defaultdict #
+import operator as op               #
 #####################################
 
 
@@ -29,16 +30,15 @@ def encoder():
     with open('/Users/DHarun/PycharmProjects/Vertiefung-Programmierung/Abgabe1/tb01_FaelleGrundtabelleKreise_csv.csv', 'rb') as f:
         global result
         result = chardet.detect(f.read())
-        print(result)
+        print("Die CSV Datei hat folgende Formatierung:", result)
 
 def import_csv():
 
-    with open('/Users/DHarun/PycharmProjects/Vertiefung-Programmierung/Abgabe1/tb01_FaelleGrundtabelleKreise_csv.csv', encoding='ISO-8859-1') as csvfile:
+    with open('/Users/DHarun/PycharmProjects/Vertiefung-Programmierung/Abgabe1/tb01_FaelleGrundtabelleKreise_csv.csv', encoding=result['encoding']) as csvfile:
 
         next(csvfile)
 
         faelle = [{k: v for k, v in row.items()}
-
 
         for row in csv.DictReader(csvfile, delimiter=";")]
 
@@ -48,18 +48,16 @@ def import_csv():
 
     print("Die CSV wurde erfolgreich importiert.")
 
-    #filter()
 
-
-def filter_method():
+def filter_list():
 
     filtered_list = [row for row in cleaned_list if "LK" in row["Kreisart"] and float(row["Aufklaerungsquote"]) < 50 and not "Straftaten insgesamt" in row["Straftat"]]
 
-    with open('aufgabe1-1.csv', "w", newline='', encoding='ISO-8859-1') as filter_output:
+    with open('aufgabe1-1.csv', "w", newline='', encoding=result['encoding']) as filter_output:
 
         fieldnames = ["Stadt-/Landkreis","Straftat","Aufklaerungsquote"]
 
-        writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore')
+        writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
         writer.writeheader()
 
         for line in filtered_list:
@@ -72,15 +70,15 @@ def bundesweite_berechnung():
 
     berechnen_list = [row for row in cleaned_list if row["erfasste Faelle"].isdigit() and not "Straftaten insgesamt" in row["Straftat"]]
 
-    result = defaultdict(int)
+    results = defaultdict(int)
 
     for d in berechnen_list:
-        result[d['Straftat']] += int(d['erfasste Faelle'])
+        results[d['Straftat']] += int(d['erfasste Faelle'])
 
     global bundesweite_liste
-    bundesweite_liste = [{'Straftat': straftat, 'erfasste Faelle': value} for straftat, value in result.items()]
+    bundesweite_liste = [{'Straftat': straftat, 'erfasste Faelle': value} for straftat, value in results.items()]
 
-    with open('aufgabe1-2.csv', "w", newline='', encoding='ISO-8859-1') as filter_output:
+    with open('aufgabe1-2.csv', "w", newline='', encoding=result['encoding']) as filter_output:
 
         fieldnames = ["Straftat","erfasste Faelle"]
 
@@ -98,7 +96,7 @@ def sorted_bundesweite_berechnung():
 
     sorted_liste = sorted(bundesweite_liste, key=lambda k: k['erfasste Faelle'], reverse=True)
 
-    with open('aufgabe1-3.csv', "w", newline='', encoding='ISO-8859-1') as filter_output:
+    with open('aufgabe1-3.csv', "w", newline='', encoding=result['encoding']) as filter_output:
 
         fieldnames = ["Straftat","erfasste Faelle"]
 
@@ -213,38 +211,7 @@ def searcher(val):
     match = [l for l in cleaned_list if l[val] == search_value]
 
     if any(d[val] == search_value for d in match):
-
-        print("Möchten Sie die Ergebnisse in der Command-Line anzeigen oder als CSV Speichern?")
-        csv_oder_cmd = int(input("1 - CSV , 2 - Command-Line anzeigen"))
-
-        try:
-            if csv_oder_cmd == 1:
-
-                print("Bitte geben sie den erwünschten Dateinamen an:")
-                datei_name = input()
-                with open('{}.csv'.format(datei_name), "w", newline='', encoding='ISO-8859-1') as filter_output:
-
-                    fieldnames = ["Schluesse","Straftat", "Gemeindeschluessel", "Stadt-/Landkreis", "Kreisart", "erfasste Faelle", "HZ nach Zensus", "Versuche - Anzahl",
-                                  "Versuche - Anteil in %", "mit Schusswaffe gedroht", "mit Schusswaffe geschossen", "aufgeklaerte Faelle", "Aufklaerungsquote",
-                                  "Tatverdaechtige insgesamt", "Tatverdaechtige - maennlich", "Tatverdaechtige - weiblich",
-                                  "Nichtdeutsche Tatverdaechtige - Anzahl", "Nichtdeutsche Tatverdaechtige - Anteil in %" ]
-
-                    writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
-                    writer.writeheader()
-
-                    for matches in match:
-                        writer.writerow(matches)
-
-                print("CSV wurde exportiert.")
-
-            elif csv_oder_cmd == 2:
-                for matches in match:
-                    print(matches)
-            else:
-                print("Bitte nur 1 oder 2 eingeben.")
-
-        except ValueError:
-            print("Bitte nur ganze Zahlen 1-2 eingeben.")
+        print_or_csv(match)
 
     else:
         print(search_value, "wurde nicht gefunden.")
@@ -279,9 +246,9 @@ def filtern_von_daten():
     print("\nSie haben folgende Felder zum Filtern ausgesucht:")
     print(val1, "," , val2)
 
-    filterer1(val1, val2)
+    filterer(val1, val2)
 
-def filterer1(val1, val2):
+def filterer(val1, val2):
 
     print("\nMit Welchen Wert möchten Sie das Erste Feld filtern?")
     global wert1
@@ -301,16 +268,15 @@ def filterer1(val1, val2):
 
     if operatoren_auswahl == 1:
         advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val1]) < wert1]
-        ineq_1    = 'gt'
+        ineq_1 = 'gt'
 
     elif operatoren_auswahl == 2:
         advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) > wert1]
-        ineq_1    = 'lt'
+        ineq_1 = 'lt'
 
     elif operatoren_auswahl == 3:
         advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) == wert1]
         ineq_1 = 'eq'
-
 
     else:
         print("Bitte nur 1-3 eingeben.")
@@ -335,7 +301,6 @@ def filterer1(val1, val2):
         advanced_filtered_list_val2 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) < wert2]
         ineq_2 = 'gt'
 
-
     elif operatoren_auswahl == 2:
         advanced_filtered_list_val2 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) > wert2]
         ineq_2 = 'lt'
@@ -355,29 +320,84 @@ def map_filters(list1, list2):
     print("\n1 - &"
           "\n2 - |")
 
-
     operatoren_auswahl = int(input())
 
 
     andor = {
-        1:lambda L: filter(
-            lambda d:getattr(op,ineq_1)(float(d[val1]), wert1) and getattr(op,ineq_2)(float(d[val2]), wert2), L
-        ),
-        2:lambda L: filter(
-            lambda d:getattr(op,ineq_1)(float(d[val1]), wert1) or  getattr(op,ineq_2)(float(d[val2]), wert2), L
-        ),
-    }
+        1:lambda L: filter(lambda d:getattr(op,ineq_1)(float(d[val1]), wert1) and getattr(op,ineq_2)(float(d[val2]), wert2), L),
+        2:lambda L: filter(lambda d:getattr(op,ineq_1)(float(d[val1]), wert1) or  getattr(op,ineq_2)(float(d[val2]), wert2), L),}
+
     mapped_list = andor[operatoren_auswahl](cleaned_list)
-    for x in mapped_list:
-        print(dict(x))
+    print_or_csv(mapped_list)
+
+
+def print_or_csv(match):
+
+    print("Möchten Sie die Ergebnisse in der Command-Line anzeigen oder als CSV Speichern?")
+    csv_oder_cmd = int(input("1 - CSV , 2 - Command-Line anzeigen"))
+
+    try:
+        if csv_oder_cmd == 1:
+            print("Bitte geben sie den erwünschten Dateinamen an:")
+            datei_name = input()
+            with open('{}.csv'.format(datei_name), "w", newline='', encoding=result['encoding']) as filter_output:
+
+                fieldnames = ["Schluesse","Straftat", "Gemeindeschluessel", "Stadt-/Landkreis", "Kreisart", "erfasste Faelle", "HZ nach Zensus", "Versuche - Anzahl",
+                                  "Versuche - Anteil in %", "mit Schusswaffe gedroht", "mit Schusswaffe geschossen", "aufgeklaerte Faelle", "Aufklaerungsquote",
+                                  "Tatverdaechtige insgesamt", "Tatverdaechtige - maennlich", "Tatverdaechtige - weiblich",
+                                  "Nichtdeutsche Tatverdaechtige - Anzahl", "Nichtdeutsche Tatverdaechtige - Anteil in %" ]
+                writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
+                writer.writeheader()
+
+                for matches in match:
+                    writer.writerow(matches)
+
+            print("CSV wurde exportiert.")
+        elif csv_oder_cmd == 2:
+            for matches in match:
+                print(matches)
+        else:
+            print("Bitte nur 1 oder 2 eingeben.")
+
+    except ValueError:
+        print("Bitte nur ganze Zahlen 1-2 eingeben.")
+
+
+
+###########################
+# Start #
+###########################
+
 
 def hauptmenu():
-    print("ok")
+    print("\nBitte Wählen Sie aus folgenden Punkten:")
+    print("\n1 - Teilaufgabe 1 - Landkreise filtern"
+          "\n2 - Teilaufgabe 1 - Berechnung für ganz Deutschland"
+          "\n3 - Teilaufgabe 1 - Berechnung sortieren"
+          "\n4 - Teilaufgabe 2 - Suche nach Daten"
+          "\n5 - Teilaufgabe 2 - Filtern von Daten"
+          "\n6 - Exit")
 
+    while True:
+        print("\nGeben Sie bitte ein:")
+        hauptmenu_input = int(input())
 
+        if hauptmenu_input == 1:
+            filter_list()
+        if hauptmenu_input == 2:
+            bundesweite_berechnung()
+        if hauptmenu_input == 3:
+            sorted_bundesweite_berechnung()
+        if hauptmenu_input == 4:
+            suche_nach_daten()
+        if hauptmenu_input == 5:
+            filtern_von_daten()
+        if hauptmenu_input == 6:
+            exit()
+            break
+
+encoder()
 import_csv()
-#bundesweite_berechnung()
-#sorted_bundesweite_berechnung()
-#suche_nach_daten()
-filtern_von_daten()
+hauptmenu()
+
 
