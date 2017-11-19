@@ -27,44 +27,51 @@ row = {}
 
 def encoder():
 
-    with open('/Users/DHarun/PycharmProjects/Vertiefung-Programmierung/Abgabe1/tb01_FaelleGrundtabelleKreise_csv.csv', 'rb') as f:
-        global result
-        result = chardet.detect(f.read())
-        print("Die CSV Datei hat folgende Formatierung:", result)
+    try:
+        with open('/Users/DHarun/PycharmProjects/Vertiefung-Programmierung/Abgabe1/tb01_FaelleGrundtabelleKreise_csv.csv', 'rb') as f:
+            global result
+            result = chardet.detect(f.read())
+            print("Die CSV Datei hat folgende Formatierung:", result)
+    except Exception as e:
+        print(str(e))
 
 def import_csv():
 
-    with open('/Users/DHarun/PycharmProjects/Vertiefung-Programmierung/Abgabe1/tb01_FaelleGrundtabelleKreise_csv.csv', encoding=result['encoding']) as csvfile:
+    try:
+        with open('/Users/DHarun/PycharmProjects/Vertiefung-Programmierung/Abgabe1/tb01_FaelleGrundtabelleKreise_csv.csv', encoding=result['encoding']) as csvfile:
 
-        next(csvfile)
+            next(csvfile)
 
-        faelle = [{k: v for k, v in row.items()}
+            faelle = [{k: v for k, v in row.items()}
 
-        for row in csv.DictReader(csvfile, delimiter=";")]
+            for row in csv.DictReader(csvfile, delimiter=";")]
 
-        global cleaned_list
-        cleaned_list = [line for line in faelle if not line["Kreisart"].isdigit() and not "Straftaten insgesamt" in line["Straftat"]]
+            global cleaned_list
+            cleaned_list = [line for line in faelle if not line["Kreisart"].isdigit() and not "Straftaten insgesamt" in line["Straftat"]]
 
 
-    print("Die CSV wurde erfolgreich importiert.")
-
+        print("Die CSV wurde erfolgreich importiert.")
+    except Exception as e:
+        print(str(e))
 
 def filter_list():
 
     filtered_list = [row for row in cleaned_list if "LK" in row["Kreisart"] and float(row["Aufklaerungsquote"]) < 50 and not "Straftaten insgesamt" in row["Straftat"]]
 
-    with open('aufgabe1-1.csv', "w", newline='', encoding=result['encoding']) as filter_output:
+    try:
+        with open('aufgabe1-1.csv', "w", newline='', encoding=result['encoding']) as filter_output:
 
-        fieldnames = ["Stadt-/Landkreis","Straftat","Aufklaerungsquote"]
+            fieldnames = ["Stadt-/Landkreis","Straftat","Aufklaerungsquote"]
 
-        writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
-        writer.writeheader()
+            writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
+            writer.writeheader()
 
-        for line in filtered_list:
-            writer.writerow(line)
+            for line in filtered_list:
+                writer.writerow(line)
 
-    print("Aufgabe 1-1.csv wurde exportiert.")
-
+        print("Aufgabe 1-1.csv wurde exportiert.")
+    except Exception as e:
+        print(str(e))
 
 def bundesweite_berechnung():
 
@@ -78,36 +85,40 @@ def bundesweite_berechnung():
     global bundesweite_liste
     bundesweite_liste = [{'Straftat': straftat, 'erfasste Faelle': value} for straftat, value in results.items()]
 
-    with open('aufgabe1-2.csv', "w", newline='', encoding=result['encoding']) as filter_output:
+    try:
+        with open('aufgabe1-2.csv', "w", newline='', encoding=result['encoding']) as filter_output:
 
-        fieldnames = ["Straftat","erfasste Faelle"]
+            fieldnames = ["Straftat","erfasste Faelle"]
 
-        writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
-        writer.writeheader()
+            writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
+            writer.writeheader()
 
-        for line in bundesweite_liste:
-            writer.writerow(line)
+            for line in bundesweite_liste:
+                writer.writerow(line)
 
-    print("Aufgabe 1-2.csv wurde exportiert.")
-
+        print("Aufgabe 1-2.csv wurde exportiert.")
+    except Exception as e:
+        print(str(e))
 
 
 def sorted_bundesweite_berechnung():
 
     sorted_liste = sorted(bundesweite_liste, key=lambda k: k['erfasste Faelle'], reverse=True)
 
-    with open('aufgabe1-3.csv', "w", newline='', encoding=result['encoding']) as filter_output:
+    try:
+        with open('aufgabe1-3.csv', "w", newline='', encoding=result['encoding']) as filter_output:
 
-        fieldnames = ["Straftat","erfasste Faelle"]
+            fieldnames = ["Straftat","erfasste Faelle"]
 
-        writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
-        writer.writeheader()
+            writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
+            writer.writeheader()
 
-        for line in sorted_liste:
-            writer.writerow(line)
+            for line in sorted_liste:
+                writer.writerow(line)
 
-    print("Aufgabe 1-3.csv wurde exportiert.")
-
+        print("Aufgabe 1-3.csv wurde exportiert.")
+    except Exception as e:
+        print(str(e))
 
 
 def suche_nach_daten():
@@ -197,7 +208,7 @@ def suche_nach_daten():
                 searcher("Nichtdeutsche Tatverdaechtige - Anteil in %")
 
             else:
-                print("napiyon amk.")
+                print("Fehler.")
         except ValueError:
             print("Bitte nur Integer eingeben, die in der Menü aufgelistet sind.")
 
@@ -206,7 +217,11 @@ def searcher(val):
 
     print(val)
     print("Bitte geben Sie ihre Suchanfrage an:")
-    search_value = input()
+
+    try:
+        search_value = input()
+    except Exception as e:
+        print(str(e))
 
     match = [l for l in cleaned_list if l[val] == search_value]
 
@@ -232,14 +247,20 @@ def filtern_von_daten():
     print("\nWelche numerische Felder möchten Sie filtern?")
 
     print("\nGeben Sie das Feld 1 an:")
-    input_val1 = int(input())
+    try:
+        input_val1 = int(input())
+    except Exception as e:
+        print(str(e))
     global val1
     val1 = menu_liste [input_val1][1]
     print(val1)
 
     print("\nGeben Sie das Feld 2 an:")
     global val2
-    input_val2 = int(input())
+    try:
+        input_val2 = int(input())
+    except Exception as e:
+        print(str(e))
     val2 = menu_liste [input_val2][1]
     print(val2)
 
@@ -252,7 +273,10 @@ def filterer(val1, val2):
 
     print("\nMit Welchen Wert möchten Sie das Erste Feld filtern?")
     global wert1
-    wert1 = int(input())
+    try:
+        wert1 = int(input())
+    except Exception as e:
+        print(str(e))
 
     print("\nWelchen Operator möchten Sie verwnden?")
     print("\n1 - <"
@@ -264,7 +288,10 @@ def filterer(val1, val2):
     global advanced_filtered_list_val1
     advanced_filtered_list_val1 = []
 
-    operatoren_auswahl = int(input())
+    try:
+        operatoren_auswahl = int(input())
+    except Exception as e:
+        print(str(e))
 
     if operatoren_auswahl == 1:
         advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val1]) < wert1]
@@ -284,14 +311,21 @@ def filterer(val1, val2):
 
     print("\nMit Welchen Wert möchten Sie das Zweite Feld filtern?")
     global wert2
-    wert2 = int(input())
+
+    try:
+        wert2 = int(input())
+    except Exception as e:
+        print(str(e))
 
     print("\nWelchen Operator möchten Sie verwnden?")
     print("\n1 - <"
           "\n2 - >"
           "\n3 - =")
 
-    operatoren_auswahl = int(input())
+    try:
+        operatoren_auswahl = int(input())
+    except Exception as e:
+        print(str(e))
 
     global advanced_filtered_list_val2
     advanced_filtered_list_val2 = []
@@ -320,8 +354,10 @@ def map_filters(list1, list2):
     print("\n1 - &"
           "\n2 - |")
 
-    operatoren_auswahl = int(input())
-
+    try:
+        operatoren_auswahl = int(input())
+    except Exception as e:
+        print(str(e))
 
     andor = {
         1:lambda L: filter(lambda d:getattr(op,ineq_1)(float(d[val1]), wert1) and getattr(op,ineq_2)(float(d[val2]), wert2), L),
@@ -380,7 +416,11 @@ def hauptmenu():
 
     while True:
         print("\nGeben Sie bitte ein:")
-        hauptmenu_input = int(input())
+        try:
+            hauptmenu_input = int(input())
+        except Exception as e:
+            print(str(e))
+            hauptmenu()
 
         if hauptmenu_input == 1:
             filter_list()
