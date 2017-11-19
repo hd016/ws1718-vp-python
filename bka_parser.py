@@ -15,7 +15,7 @@ import csv                          #
 import chardet                      #
 from collections import defaultdict
 import itertools
-import                      operator#
+import operator as op
 #####################################
 
 
@@ -266,10 +266,12 @@ def filtern_von_daten():
 
     print("\nGeben Sie das Feld 1 an:")
     input_val1 = int(input())
+    global val1
     val1 = menu_liste [input_val1][1]
     print(val1)
 
     print("\nGeben Sie das Feld 2 an:")
+    global val2
     input_val2 = int(input())
     val2 = menu_liste [input_val2][1]
     print(val2)
@@ -282,12 +284,15 @@ def filtern_von_daten():
 def filterer1(val1, val2):
 
     print("\nMit Welchen Wert möchten Sie das Erste Feld filtern?")
+    global wert1
     wert1 = int(input())
 
     print("\nWelchen Operator möchten Sie verwnden?")
     print("\n1 - <"
           "\n2 - >"
           "\n3 - =")
+
+    global ineq_1, ineq_2
 
     global advanced_filtered_list_val1
     advanced_filtered_list_val1 = []
@@ -296,18 +301,23 @@ def filterer1(val1, val2):
 
     if operatoren_auswahl == 1:
         advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val1]) < wert1]
+        ineq_1    = 'gt'
 
     elif operatoren_auswahl == 2:
         advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) > wert1]
+        ineq_1    = 'lt'
 
     elif operatoren_auswahl == 3:
         advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) == wert1]
+        ineq_1 = 'eq'
+
 
     else:
         print("Bitte nur 1-3 eingeben.")
 
 
     print("\nMit Welchen Wert möchten Sie das Zweite Feld filtern?")
+    global wert2
     wert2 = int(input())
 
     print("\nWelchen Operator möchten Sie verwnden?")
@@ -323,12 +333,16 @@ def filterer1(val1, val2):
 
     if operatoren_auswahl == 1:
         advanced_filtered_list_val2 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) < wert2]
+        ineq_2 = 'gt'
+
 
     elif operatoren_auswahl == 2:
         advanced_filtered_list_val2 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) > wert2]
+        ineq_2 = 'lt'
 
     elif operatoren_auswahl == 3:
         advanced_filtered_list_val2 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) == wert2]
+        ineq_2 = 'eq'
 
     else:
         print("Bitte nur 1-3 eingeben.")
@@ -341,18 +355,21 @@ def map_filters(list1, list2):
     print("\n1 - &"
           "\n2 - |")
 
+
     operatoren_auswahl = int(input())
 
+
     andor = {
-    1:lambda l1,l2: filter(lambda el:el in set(l1)&set(l2), l1+l2),
-    2:lambda l1,l2: filter(lambda el:el in set(l1)|set(l2), l1+l2),}
-
-
-    mapped_list = andor[operatoren_auswahl](
-    advanced_filtered_list_val1,
-    advanced_filtered_list_val2)
+        1:lambda L: filter(
+            lambda d:getattr(op,ineq_1)(float(d[val1]), wert1) and getattr(op,ineq_2)(float(d[val2]), wert2), L
+        ),
+        2:lambda L: filter(
+            lambda d:getattr(op,ineq_1)(float(d[val1]), wert1) or  getattr(op,ineq_2)(float(d[val2]), wert2), L
+        ),
+    }
+    mapped_list = andor[operatoren_auswahl](cleaned_list)
     for x in mapped_list:
-        print(x)
+        print(dict(x))
 
 def hauptmenu():
     print("ok")
