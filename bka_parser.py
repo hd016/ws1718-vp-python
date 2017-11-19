@@ -7,7 +7,7 @@ print(sys.version)  #
 print("")           #
 #####################
 
-print("------ Bitte Python Version 3.5.x verwenden! Ab Version 3.5.x werden sind Dictionaries als Ordered Dict vordefiniert.! ----")
+print("------ Bitte Python Version 3.5.x verwenden! Ab Version 3.5.x sind Dictionaries als Ordered Dict vordefiniert.! ----")
 print("")
 
 #####################################
@@ -29,6 +29,7 @@ def encoder():
 
     try:
         with open('/Users/DHarun/PycharmProjects/Vertiefung-Programmierung/Abgabe1/tb01_FaelleGrundtabelleKreise_csv.csv', 'rb') as f:
+            print("Bitte warten: Die Formatierung der CSV Datei wird ausgelesen..")
             global result
             result = chardet.detect(f.read())
             print("Die CSV Datei hat folgende Formatierung:", result)
@@ -218,6 +219,8 @@ def searcher(val):
     print(val)
     print("Bitte geben Sie ihre Suchanfrage an:")
 
+    search_value = ""
+
     try:
         search_value = input()
     except Exception as e:
@@ -241,12 +244,15 @@ def filtern_von_daten():
                      "Nichtdeutsche Tatverdaechtige - Anzahl":13, "Nichtdeutsche Tatverdaechtige - Anteil in %":14 }
 
     menu_liste = sorted([(value,key) for (key,value) in menu_dict.items()])
+    
     for item in menu_liste :
         print(item)
 
     print("\nWelche numerische Felder möchten Sie filtern?")
 
     print("\nGeben Sie das Feld 1 an:")
+
+    input_val1 = 0
     try:
         input_val1 = int(input())
     except Exception as e:
@@ -257,6 +263,7 @@ def filtern_von_daten():
 
     print("\nGeben Sie das Feld 2 an:")
     global val2
+    input_val2 = 0
     try:
         input_val2 = int(input())
     except Exception as e:
@@ -288,6 +295,7 @@ def filterer(val1, val2):
     global advanced_filtered_list_val1
     advanced_filtered_list_val1 = []
 
+    operatoren_auswahl = 0
     try:
         operatoren_auswahl = int(input())
     except Exception as e:
@@ -354,6 +362,7 @@ def map_filters(list1, list2):
     print("\n1 - &"
           "\n2 - |")
 
+    operatoren_auswahl = 0
     try:
         operatoren_auswahl = int(input())
     except Exception as e:
@@ -382,6 +391,7 @@ def print_or_csv(match):
                                   "Versuche - Anteil in %", "mit Schusswaffe gedroht", "mit Schusswaffe geschossen", "aufgeklaerte Faelle", "Aufklaerungsquote",
                                   "Tatverdaechtige insgesamt", "Tatverdaechtige - maennlich", "Tatverdaechtige - weiblich",
                                   "Nichtdeutsche Tatverdaechtige - Anzahl", "Nichtdeutsche Tatverdaechtige - Anteil in %" ]
+
                 writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
                 writer.writeheader()
 
@@ -389,6 +399,7 @@ def print_or_csv(match):
                     writer.writerow(matches)
 
             print("CSV wurde exportiert.")
+
         elif csv_oder_cmd == 2:
             for matches in match:
                 print(matches)
@@ -407,14 +418,14 @@ def print_or_csv(match):
 
 def hauptmenu():
     print("\nBitte Wählen Sie aus folgenden Punkten:")
-    print("\n1 - Teilaufgabe 1 - Landkreise filtern"
+
+    while True:
+        print("\n1 - Teilaufgabe 1 - Landkreise filtern"
           "\n2 - Teilaufgabe 1 - Berechnung für ganz Deutschland"
           "\n3 - Teilaufgabe 1 - Berechnung sortieren"
           "\n4 - Teilaufgabe 2 - Suche nach Daten"
           "\n5 - Teilaufgabe 2 - Filtern von Daten"
           "\n6 - Exit")
-
-    while True:
         print("\nGeben Sie bitte ein:")
         try:
             hauptmenu_input = int(input())
@@ -439,5 +450,3 @@ def hauptmenu():
 encoder()
 import_csv()
 hauptmenu()
-
-
