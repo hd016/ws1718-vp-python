@@ -104,7 +104,12 @@ def bundesweite_berechnung():
 
 def sorted_bundesweite_berechnung():
 
-    sorted_liste = sorted(bundesweite_liste, key=lambda k: k['erfasste Faelle'], reverse=True)
+    try:
+        sorted_liste = sorted(bundesweite_liste, key=lambda k: k['erfasste Faelle'], reverse=True)
+    except NameError as e_liste:
+        print("Die Liste bundesweite_liste existiert nicht. Bitte führen Sie zuerst die Teilaufgabe 1- Berechnung für ganz Deutschland aus. "
+              "Erst danach können Sie diese Liste sortieren.")
+        print("Error:", str(e_liste))
 
     try:
         with open('aufgabe1-3.csv', "w", newline='', encoding=result['encoding']) as filter_output:
@@ -244,7 +249,7 @@ def filtern_von_daten():
                      "Nichtdeutsche Tatverdaechtige - Anzahl":13, "Nichtdeutsche Tatverdaechtige - Anteil in %":14 }
 
     menu_liste = sorted([(value,key) for (key,value) in menu_dict.items()])
-    
+
     for item in menu_liste :
         print(item)
 
