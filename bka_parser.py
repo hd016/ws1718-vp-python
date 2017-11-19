@@ -28,7 +28,7 @@ row = {}
 def encoder():
 
     try:
-        with open('/Users/DHarun/PycharmProjects/Vertiefung-Programmierung/Abgabe1/tb01_FaelleGrundtabelleKreise_csv.csv', 'rb') as f:
+        with open('tb01_FaelleGrundtabelleKreise_csv.csv', 'rb') as f:
             print("Bitte warten: Die Formatierung der CSV Datei wird ausgelesen..")
             global result
             result = chardet.detect(f.read())
@@ -39,7 +39,7 @@ def encoder():
 def import_csv():
 
     try:
-        with open('/Users/DHarun/PycharmProjects/Vertiefung-Programmierung/Abgabe1/tb01_FaelleGrundtabelleKreise_csv.csv', encoding=result['encoding']) as csvfile:
+        with open('tb01_FaelleGrundtabelleKreise_csv.csv', encoding=result['encoding']) as csvfile:
 
             next(csvfile)
 
@@ -84,12 +84,12 @@ def bundesweite_berechnung():
         results[d['Straftat']] += int(d['erfasste Faelle'])
 
     global bundesweite_liste
-    bundesweite_liste = [{'Straftat': straftat, 'erfasste Faelle': value} for straftat, value in results.items()]
+    bundesweite_liste = [{'Straftat': straftat, 'Summe': value} for straftat, value in results.items()]
 
     try:
         with open('aufgabe1-2.csv', "w", newline='', encoding=result['encoding']) as filter_output:
 
-            fieldnames = ["Straftat","erfasste Faelle"]
+            fieldnames = ["Straftat","Summe"]
 
             writer = csv.DictWriter(filter_output, fieldnames=fieldnames, extrasaction='ignore', delimiter=";")
             writer.writeheader()
@@ -255,6 +255,7 @@ def filtern_von_daten():
     input_val1 = 0
     try:
         input_val1 = int(input())
+        input_val1 += -1
     except Exception as e:
         print(str(e))
     global val1
