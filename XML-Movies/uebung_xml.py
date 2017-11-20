@@ -41,22 +41,23 @@ def hauptmenu():
 
 def aufgabe1():
     try:
+
         for hit in iter(root):
             if(hit.tag == 'movie'):
-                movieTuple = ""
+                movieList = []
                 for h in hit:
                     if(h.tag == 'title'):
-                        movieTuple += "Film: " + str(h.text) + " | "
+                        movieList.append("Film: " + str(h.text) + " | ")
                     if(h.tag == 'producer'):
                         producer = ""
                         for p in h:
                             for j in p:
                                 if(j.tag == 'name'):
                                     producer += str(j.text) + " - "
-                        movieTuple += producer + "|"
+                        movieList.append(producer + "|")
                     if(h.tag == 'year'):
-                        movieTuple += "Jahr: " + str(h.text) + " | "
-                print(movieTuple)
+                        movieList.append("Jahr: " + str(h.text) + " | ")
+                print(''.join(movieList))
 
     except Exception as e:
         print(str(e))
