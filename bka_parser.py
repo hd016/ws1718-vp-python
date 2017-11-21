@@ -468,14 +468,22 @@ def map_filters(list1, list2):
         1:lambda L: filter(lambda d:getattr(op,ineq_1)(float(d[val1]), wert1) and getattr(op,ineq_2)(float(d[val2]), wert2), L),
         2:lambda L: filter(lambda d:getattr(op,ineq_1)(float(d[val1]), wert1) or  getattr(op,ineq_2)(float(d[val2]), wert2), L),}
 
-    mapped_list = []
 
     try:
+        mapped_list_if = andor[operatoren_auswahl](cleaned_list)
         mapped_list = andor[operatoren_auswahl](cleaned_list)
+
+        len_mapped_list = len(list(filter(bool, mapped_list_if)))
+
+        if len_mapped_list == 0:
+            print("Die gefilterlte Liste ist leer. Bitte starten Sie Ihre Filteranfrage erneut.")
+            hauptmenu()
+
+        print_or_csv(mapped_list)
+
 
     except (ValueError, TypeError, IndexError, KeyError) as e:
         print(str(e))
-    print_or_csv(mapped_list)
 
 
 def print_or_csv(match):
@@ -515,7 +523,7 @@ def print_or_csv(match):
 
 
 ###########################
-# Start #
+        # Start #
 ###########################
 
 
@@ -550,6 +558,7 @@ def hauptmenu():
         if hauptmenu_input == 6:
             exit()
             break
+
 
 encoder()
 import_csv()
