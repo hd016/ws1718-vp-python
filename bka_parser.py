@@ -26,6 +26,9 @@ global row
 row = {}
 
 def encoder():
+    '''Um die Codierung der CSV Datei richtig auslesen zu können, wird zuerst die ganze CSV Datei eingelesen
+    und anschließend die Codierung in eine Dictionary gespeichert. Die Codierung befindet sich in der Variable result.
+    @:param result['encoding]'''
 
     try:
         with open('tb01_FaelleGrundtabelleKreise_csv.csv', 'rb') as f:
@@ -37,6 +40,9 @@ def encoder():
         print(str(e))
 
 def import_csv():
+    '''Die CSV Datei wird mit @:param result eingelesen. Die erste Zeile in der Datei wird komplett mit next() übersprungen.
+    Anschließend wird überprüft, ob in der Spalte "Kreisart" sich Digits befinden, falls ja, wird diese Zeile *nicht* in die
+    gesäuberte Liste eingelesen. Die Zeilen mit dem Inhalt "Straftaten insgesamt werden nicht berücksichtigt.'''
 
     try:
         with open('tb01_FaelleGrundtabelleKreise_csv.csv', encoding=result['encoding']) as csvfile:
@@ -52,10 +58,12 @@ def import_csv():
 
 
         print("Die CSV wurde erfolgreich importiert.")
+
     except Exception as e:
         print(str(e))
 
 def filter_list():
+    '''Aufgabe 1-1 - Output: Aufgabe1-1.csv'''
 
     filtered_list = [row for row in cleaned_list if "LK" in row["Kreisart"] and float(row["Aufklaerungsquote"]) < 50 and not "Straftaten insgesamt" in row["Straftat"]]
 
@@ -75,6 +83,8 @@ def filter_list():
         print(str(e))
 
 def bundesweite_berechnung():
+    '''Aufgabe 1-2 - defaultdict <-> OrderedDict. Je nach Version und Ansatz kann zwischen diesen zwei Möglichkeiten entschieden werden.
+    Die "erfasste Faelle" Spalte wird iteriert und anschließend mit dem results dictionary gemappt.'''
 
     berechnen_list = [row for row in cleaned_list if row["erfasste Faelle"].isdigit() and not "Straftaten insgesamt" in row["Straftat"]]
 
@@ -98,18 +108,24 @@ def bundesweite_berechnung():
                 writer.writerow(line)
 
         print("Aufgabe 1-2.csv wurde exportiert.")
+
     except Exception as e:
         print(str(e))
 
 
 def sorted_bundesweite_berechnung():
+    '''Aufgabe 1-3 - Die bundesweite_liste wird in dieser Methode nach den erfassten Fällen sortiert. Wenn die Methode bundesweite_berechnung() nicht zuerst
+    ausgeführt wird, wird in dieser Methode ein NameError Exception ausgeworfen. Die Keys werden mit dem Standard sorted Methode sortiert.'''
+
+    sorted_liste = []
 
     try:
         sorted_liste = sorted(bundesweite_liste, key=lambda k: k['erfasste Faelle'], reverse=True)
-    except NameError as e_liste:
+
+    except NameError as e:
         print("Die Liste bundesweite_liste existiert nicht. Bitte führen Sie zuerst die Teilaufgabe 1- Berechnung für ganz Deutschland aus. "
               "Erst danach können Sie diese Liste sortieren.")
-        print("Error:", str(e_liste))
+        print("Error:", str(e))
 
     try:
         with open('aufgabe1-3.csv', "w", newline='', encoding=result['encoding']) as filter_output:
@@ -128,10 +144,11 @@ def sorted_bundesweite_berechnung():
 
 
 def suche_nach_daten():
+    '''Aufgabe 2-1 - Durch die Menüauswahl werden die Spaltennamen an die Methode searcher übergeben.'''
 
     while True:
         try:
-
+            print("\nDatensuche Menü")
             print("\nBitte geben Sie folgende Suchfelder ein:")
             print("\n0 - Zurück zur Hauptmenü"
                   "\n1 - Schluesse "
@@ -214,12 +231,14 @@ def suche_nach_daten():
                 searcher("Nichtdeutsche Tatverdaechtige - Anteil in %")
 
             else:
-                print("Fehler.")
+                print("Fehler. Bitte versuchen Sie es erneut.")
         except ValueError:
             print("Bitte nur Integer eingeben, die in der Menü aufgelistet sind.")
 
 
 def searcher(val):
+    '''In dieser Methode wird durch eine List Comphrension die gematchen Zeilen in eine neue Liste geschrieben. Anschließend wird die Methode
+    print_oder_csv aufgerufen. '''
 
     print(val)
     print("Bitte geben Sie ihre Suchanfrage an:")
@@ -241,7 +260,12 @@ def searcher(val):
     return match
 
 
-def filtern_von_daten():
+def filter_values():
+    '''Aufgabe 2-2 - Es werden zwei Werte (val1, val2) angenommen und anschließend an die Methode filterer übergeben.'''
+
+    global val1
+    global val2
+
 
     menu_dict = {"Gemeindeschluessel":1, "erfasste Faelle":2,  "HZ nach Zensus":3, "Versuche - Anzahl":4, "Versuche - Anteil in %":5,
                      "mit Schusswaffe gedroht":6, "mit Schusswaffe geschossen":7, "aufgeklaerte Faelle":8, "Aufklaerungsquote":9, "Tatverdaechtige insgesamt":10,
@@ -256,52 +280,84 @@ def filtern_von_daten():
     print("\nWelche numerische Felder möchten Sie filtern?")
 
     print("\nGeben Sie das Feld 1 an:")
-
     input_val1 = 0
+
     try:
+
         input_val1 = int(input())
-        input_val1 += -1
-    except Exception as e:
-        print(str(e))
-    global val1
-    val1 = menu_liste [input_val1][1]
-    print(val1)
+
+    except ValueError:
+        print("Bitte nur Integer eingeben.")
+        filter_values()
+
+    input_val1 += -1
+
+
+    try:
+        val1 = menu_liste[input_val1][1]
+        print(val1)
+
+    except IndexError as e:
+        print("Bitte nur Zahlen im Menü angeben.",str(e))
+        filter_values()
+
 
     print("\nGeben Sie das Feld 2 an:")
-    global val2
     input_val2 = 0
+
     try:
         input_val2 = int(input())
-    except Exception as e:
-        print(str(e))
-    val2 = menu_liste [input_val2][1]
-    print(val2)
+
+    except ValueError:
+        print("Bitte nur Integer eingeben.")
+        filter_values()
+
+    input_val2 += -1
+
+    try:
+        val2 = menu_liste[input_val2][1]
+        print(val2)
+
+    except IndexError as e:
+        print("Bitte nur Zahlen im Menü angeben.",str(e))
+        filter_values()
 
     print("\nSie haben folgende Felder zum Filtern ausgesucht:")
     print(val1, "," , val2)
 
-    filterer(val1, val2)
+    filterer()
 
-def filterer(val1, val2):
+
+def filterer():
+    '''Die ausgewählten Wertenamen (val1,val2) werden nun mit wert1 und wert2 "gemappt". Es werden zwei neue Listen je advanced_filtered_list erstellt.
+    Durch die If-Menü werden die Operatoren und dessen Attribute übergeben. ineq1 sowie ineq2 sind Operator Variablen, die als Strings gespeichert werden.
+    gt = greater then, lt = little then, eq = equal. Je Durchlauf wird durch die If-Menü die Operatoren neuzugeordnet. Anschließend bekommen die
+    zwei advanced_filtered_lists mit List Comprehnsions neue Daten zugewießen. Anschließend werden diese zwei Maps an die nächste Funktion zum
+    Mappen übergeben. Dort werden die logischen Operatoren angewendet.'''
+
+    global wert1, wert2
+    global ineq_1, ineq_2
 
     print("\nMit Welchen Wert möchten Sie das Erste Feld filtern?")
-    global wert1
+
     try:
         wert1 = int(input())
-    except Exception as e:
-        print(str(e))
+
+    except ValueError as e:
+        print("Bitte nur Integer oder Float eingeben. Diese Datensuche bietet nur numerische Suchen an.", str(e))
+        filterer()
 
     print("\nWelchen Operator möchten Sie verwnden?")
     print("\n1 - <"
           "\n2 - >"
           "\n3 - =")
 
-    global ineq_1, ineq_2
 
     global advanced_filtered_list_val1
     advanced_filtered_list_val1 = []
 
     operatoren_auswahl = 0
+
     try:
         operatoren_auswahl = int(input())
     except Exception as e:
@@ -324,12 +380,14 @@ def filterer(val1, val2):
 
 
     print("\nMit Welchen Wert möchten Sie das Zweite Feld filtern?")
-    global wert2
 
     try:
         wert2 = int(input())
-    except Exception as e:
-        print(str(e))
+
+    except ValueError as e:
+        print("Bitte nur Integer oder Float eingeben. Diese Datensuche bietet nur numerische Suchen an.", str(e))
+        filterer()
+
 
     print("\nWelchen Operator möchten Sie verwnden?")
     print("\n1 - <"
@@ -338,6 +396,7 @@ def filterer(val1, val2):
 
     try:
         operatoren_auswahl = int(input())
+
     except Exception as e:
         print(str(e))
 
@@ -364,6 +423,9 @@ def filterer(val1, val2):
 
 
 def map_filters(list1, list2):
+    '''Durch die If-Menü werden zwei je nach operatoren_auswahl lambda Funktionen aufgerufen. Durch getattr Funktion werden die Operatoren
+    Attribute angewandt (gt, lt, eq).'''
+
     print("\nMit Welchen logischen Operatoren möchten Sie die Felder filtern?")
     print("\n1 - &"
           "\n2 - |")
@@ -371,7 +433,8 @@ def map_filters(list1, list2):
     operatoren_auswahl = 0
     try:
         operatoren_auswahl = int(input())
-    except Exception as e:
+
+    except ValueError or TypeError as e:
         print(str(e))
 
     andor = {
@@ -383,6 +446,7 @@ def map_filters(list1, list2):
 
 
 def print_or_csv(match):
+    '''Die Methode wird aufgerufen für die Möglichkeit zwischen CSV oder Command-Line Output. Der User kann den datei_name selbst wählen.'''
 
     print("Möchten Sie die Ergebnisse in der Command-Line anzeigen oder als CSV Speichern?")
     csv_oder_cmd = int(input("1 - CSV , 2 - Command-Line anzeigen"))
@@ -448,7 +512,7 @@ def hauptmenu():
         if hauptmenu_input == 4:
             suche_nach_daten()
         if hauptmenu_input == 5:
-            filtern_von_daten()
+            filter_values()
         if hauptmenu_input == 6:
             exit()
             break
