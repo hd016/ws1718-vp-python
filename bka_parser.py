@@ -93,7 +93,6 @@ def bundesweite_berechnung():
     for d in berechnen_list:
         results[d['Straftat']] += int(d['erfasste Faelle'])
 
-    global bundesweite_liste
     bundesweite_liste = [{'Straftat': straftat, 'Summe': value} for straftat, value in results.items()]
 
     try:
@@ -118,6 +117,16 @@ def sorted_bundesweite_berechnung():
     ausgeführt wird, wird in dieser Methode ein NameError Exception ausgeworfen. Die Keys werden mit dem Standard sorted Methode sortiert.'''
 
     sorted_liste = []
+
+    berechnen_list = [row for row in cleaned_list if row["erfasste Faelle"].isdigit() and not "Straftaten insgesamt" in row["Straftat"]]
+
+    results = defaultdict(int)
+
+    for d in berechnen_list:
+        results[d['Straftat']] += int(d['erfasste Faelle'])
+
+    global bundesweite_liste
+    bundesweite_liste = [{'Straftat': straftat, 'erfasste Faelle': value} for straftat, value in results.items()]
 
     try:
         sorted_liste = sorted(bundesweite_liste, key=lambda k: k['erfasste Faelle'], reverse=True)
