@@ -338,6 +338,12 @@ def filterer():
     global wert1, wert2
     global ineq_1, ineq_2
 
+    global advanced_filtered_list_val1
+    advanced_filtered_list_val1 = []
+
+    global advanced_filtered_list_val2
+    advanced_filtered_list_val2 = []
+
     print("\nMit Welchen Wert möchten Sie das Erste Feld filtern?")
 
     try:
@@ -345,6 +351,7 @@ def filterer():
 
     except ValueError as e:
         print("Bitte nur Integer oder Float eingeben. Diese Datensuche bietet nur numerische Suchen an.", str(e))
+        print("Funktion Reset")
         filterer()
 
     print("\nWelchen Operator möchten Sie verwnden?")
@@ -352,16 +359,20 @@ def filterer():
           "\n2 - >"
           "\n3 - =")
 
-
-    global advanced_filtered_list_val1
-    advanced_filtered_list_val1 = []
-
     operatoren_auswahl = 0
 
     try:
         operatoren_auswahl = int(input())
-    except Exception as e:
+
+        if operatoren_auswahl not in range(1,4):
+            print("Bitte 1, 2 oder 3 eingeben")
+            print("Funktion Reset")
+            filterer()
+
+    except (ValueError, TypeError, IndexError, KeyError) as e:
         print(str(e))
+        filterer()
+
 
     if operatoren_auswahl == 1:
         advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val1]) < wert1]
@@ -375,9 +386,6 @@ def filterer():
         advanced_filtered_list_val1 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) == wert1]
         ineq_1 = 'eq'
 
-    else:
-        print("Bitte nur 1-3 eingeben.")
-
 
     print("\nMit Welchen Wert möchten Sie das Zweite Feld filtern?")
 
@@ -386,6 +394,7 @@ def filterer():
 
     except ValueError as e:
         print("Bitte nur Integer oder Float eingeben. Diese Datensuche bietet nur numerische Suchen an.", str(e))
+        print("Funktion Reset")
         filterer()
 
 
@@ -394,15 +403,19 @@ def filterer():
           "\n2 - >"
           "\n3 - =")
 
+    operatoren_auswahl = 0
+
     try:
         operatoren_auswahl = int(input())
 
-    except Exception as e:
+        if operatoren_auswahl not in range(1,4):
+            print("Bitte 1, 2 oder 3 eingeben")
+            print("Funktion Reset")
+            filterer()
+
+    except (ValueError, TypeError, IndexError, KeyError) as e:
         print(str(e))
-
-    global advanced_filtered_list_val2
-    advanced_filtered_list_val2 = []
-
+        filterer()
 
     if operatoren_auswahl == 1:
         advanced_filtered_list_val2 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) < wert2]
@@ -416,8 +429,6 @@ def filterer():
         advanced_filtered_list_val2 = [tuple(row.items()) for row in cleaned_list if float(row[val2]) == wert2]
         ineq_2 = 'eq'
 
-    else:
-        print("Bitte nur 1-3 eingeben.")
 
     map_filters(advanced_filtered_list_val1,advanced_filtered_list_val2)
 
@@ -431,17 +442,31 @@ def map_filters(list1, list2):
           "\n2 - |")
 
     operatoren_auswahl = 0
+
     try:
         operatoren_auswahl = int(input())
 
-    except ValueError or TypeError as e:
+        if operatoren_auswahl not in range(1,3):
+            print("Bitte 1 oder 2 eingeben")
+            print("Funktion Reset")
+            map_filters(advanced_filtered_list_val1,advanced_filtered_list_val2)
+
+    except (ValueError, TypeError, IndexError, KeyError) as e:
         print(str(e))
+        print("Funktion Reset")
+        map_filters(advanced_filtered_list_val1,advanced_filtered_list_val2)
 
     andor = {
         1:lambda L: filter(lambda d:getattr(op,ineq_1)(float(d[val1]), wert1) and getattr(op,ineq_2)(float(d[val2]), wert2), L),
         2:lambda L: filter(lambda d:getattr(op,ineq_1)(float(d[val1]), wert1) or  getattr(op,ineq_2)(float(d[val2]), wert2), L),}
 
-    mapped_list = andor[operatoren_auswahl](cleaned_list)
+    mapped_list = []
+
+    try:
+        mapped_list = andor[operatoren_auswahl](cleaned_list)
+
+    except (ValueError, TypeError, IndexError, KeyError) as e:
+        print(str(e))
     print_or_csv(mapped_list)
 
 
@@ -490,6 +515,7 @@ def hauptmenu():
     print("\nBitte Wählen Sie aus folgenden Punkten:")
 
     while True:
+        print("\n--Hauptmenü--")
         print("\n1 - Teilaufgabe 1 - Landkreise filtern"
           "\n2 - Teilaufgabe 1 - Berechnung für ganz Deutschland"
           "\n3 - Teilaufgabe 1 - Berechnung sortieren"
