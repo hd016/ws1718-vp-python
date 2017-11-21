@@ -113,8 +113,8 @@ def bundesweite_berechnung():
 
 
 def sorted_bundesweite_berechnung():
-    '''Aufgabe 1-3 - Die bundesweite_liste wird in dieser Methode nach den erfassten Fällen sortiert. Wenn die Methode bundesweite_berechnung() nicht zuerst
-    ausgeführt wird, wird in dieser Methode ein NameError Exception ausgeworfen. Die Keys werden mit dem Standard sorted Methode sortiert.'''
+    '''Aufgabe 1-3 - Die bundesweite_liste wird in dieser Methode nach den erfassten Fällen sortiert.
+    Die Keys werden mit dem Standard sorted Methode sortiert.'''
 
     sorted_liste = []
 
@@ -132,8 +132,7 @@ def sorted_bundesweite_berechnung():
         sorted_liste = sorted(bundesweite_liste, key=lambda k: k['erfasste Faelle'], reverse=True)
 
     except NameError as e:
-        print("Die Liste bundesweite_liste existiert nicht. Bitte führen Sie zuerst die Teilaufgabe 1- Berechnung für ganz Deutschland aus. "
-              "Erst danach können Sie diese Liste sortieren.")
+        print("Die Liste bundesweite_liste existiert nicht.")
         print("Error:", str(e))
 
     try:
