@@ -1,5 +1,5 @@
 #Abgabe 1 Vertiefung Programmierung
-#Autoren: Harun Dalici (29488), Tugay Yentur()
+#Autoren: Harun Dalici (29488), Tugay Yentur(28835)
 
 #######################
 import sys          #
