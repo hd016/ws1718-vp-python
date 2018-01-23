@@ -30,6 +30,7 @@ def hauptmenu():
             "\n2 - Teilaufgabe 1.2"
             "\n3 - Teilaufgabe 1.3"
             "\n4 - Teilaufgabe 2.1"
+            "\n5 - Teilaufgabe 2.2"
             "\n6 - Exit")
         print("\nGeben Sie bitte ein:")
         try:
@@ -47,7 +48,7 @@ def hauptmenu():
         if hauptmenu_input == 4:
             teilaufgabe2_1()
         if hauptmenu_input == 5:
-            print("Kommt noch")
+            teilaufgabe2_2()
         if hauptmenu_input == 6:
             exit()
             break
@@ -259,9 +260,13 @@ def teilaufgabe1_3():
 # Evtl. nicht richtig für BlitzDB -> Dokumente verschieden benennen?
 def teilaufgabe2_1():
 
-    parser = etree.XMLParser(dtd_validation=True)
-    tree = etree.parse(file_path, parser)
-    root = tree.getroot()
+    try:
+        print("Parsing ...")
+        parser = etree.XMLParser(dtd_validation=True)
+        tree = etree.parse(file_path, parser)
+        root = tree.getroot()
+    except Exception:
+        print(Exception)
 
     for e in root.xpath("./inproceedings[year='1980']"):
         mdate = e.get("mdate")
@@ -293,7 +298,7 @@ def teilaufgabe2_1():
             if (x.tag == "url"):
                 url = x.text
 
-        inproceedingsDoc = Inproceedings({
+        Inproc = Inproceedings({
             'key': key,
             'mdate': mdate,
             'author': author,
@@ -306,7 +311,7 @@ def teilaufgabe2_1():
             'url': url
         })
 
-        backend.save(inproceedingsDoc)
+        backend.save(Inproc)
 
         e.clear()
 
@@ -344,7 +349,7 @@ def teilaufgabe2_1():
             if (x.tag == "url"):
                 url = x.text
 
-        proceedingsDoc = Proceedings({
+        Proc = Proceedings({
             'key': key,
             'mdate': mdate,
             'editor': editor,
@@ -358,12 +363,41 @@ def teilaufgabe2_1():
             'url': url
         })
 
-        backend.save(proceedingsDoc)
+        backend.save(Proc)
 
         e.clear()
 
     # Commit, damit die Dokumente auf die Disc gespeichert werden
     backend.commit()
+
+def teilaufgabe2_2():
+    inproceedings = backend.filter(Inproceedings, {})
+
+    for inproceeding in inproceedings:
+        try:
+            proceeding = backend.get(Proceedings, {'key' : inproceeding['crossref']})
+            inproceeding['proc:editor'] = proceeding.editor
+            inproceeding['proc:title'] = proceeding.title
+            inproceeding['proc:volume'] = proceeding.volume
+            inproceeding['proc:year'] = proceeding.year
+            inproceeding['proc:isbn'] = proceeding.isbn
+            inproceeding['proc:booktitle'] = proceeding.booktitle
+            inproceeding['proc:series'] = proceeding.series
+            inproceeding['proc:publisher'] = proceeding.publisher
+            inproceeding['proc:url'] = proceeding.url
+
+            inproceeding.save()
+
+        except Proceedings.DoesNotExist:
+            pass
+        except Proceedings.MultipleDocumentsReturned:
+            pass
+
+    backend.commit()
+
+def teilaufgabe3_1():
+    print()
+
 
 
 hauptmenu()
